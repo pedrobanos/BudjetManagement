@@ -1,0 +1,30 @@
+﻿@model Category
+
+@{
+    ViewData["Title"] = "Update Category";
+}
+
+<h1>Update Category</h1>
+<h5>The category not only shows where do we spend our budjet but also our incomes</h5>
+
+<form asp-action="Update">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Id"/>
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control"/>
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="TypeOperationId" class="form-label"></label>
+        <select asp-for="TypeOperationId" asp-items="Html.GetEnumSelectList<TypeOperation>()" 
+            class="form-select"></select>
+        <span asp-validation-for="TypeOperationId" class="text-danger"></span>
+    </div>
+    <button class="btn btn-primary">Send</button>
+    <a class="btn btn-secondary" asp-action="Index">Cancel</a>
+</form>
+
+@section Scripts{        
+    <partial name="_ValidationScriptsPartial" />
+}

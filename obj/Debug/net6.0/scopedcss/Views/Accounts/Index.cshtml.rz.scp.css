@@ -1,0 +1,15 @@
+.accordion-acccount button[b-ekp0tb6lxe] {
+    color: black !important;
+    font-size: 20px;
+}
+
+    .accordion-acccount button > span[b-ekp0tb6lxe] {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+.accordion-acccount ul li[b-ekp0tb6lxe] {
+    display: flex;
+    justify-content: space-between;
+}

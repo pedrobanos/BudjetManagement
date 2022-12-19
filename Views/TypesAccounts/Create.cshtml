@@ -1,0 +1,46 @@
+﻿@model TypeAccount
+
+@{
+    ViewData["Tuitle"] = "Create Type Account";
+}
+
+<h1>Crear tipo de cuenta</h1>
+<h5>El tipo de cuenta se refiere a cómo podemos agrupar cuentas.
+    Ejemplos: Préstamos, tarjetas de crédit, etc.
+</h5>
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<form asp-action="Create"> 
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label">Name</label>
+        <input type="text" asp-for="Name" class="form-control"/>
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    @*<div class="mb-3">
+        <label asp-for="Email" class="form-label">Email</label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Age" class="form-label">Age</label>
+        <input asp-for="Age" class="form-control" />
+        <span asp-validation-for="Age" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="URL" class="form-label">Url</label>
+        <input asp-for="URL" class="form-control" />
+        <span asp-validation-for="URL" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="CreditCard" class="form-label">Credit Card</label>
+        <input asp-for="CreditCard" class="form-control"/>
+        <span asp-validation-for="CreditCard" class="text-danger"></span>
+    </div>*@
+    <button type="submit" class="btn btn-primary">Send</button>
+    <a class="btn btn-secondary" asp-action="Index">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

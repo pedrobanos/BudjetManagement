@@ -1,0 +1,15 @@
+﻿.accordion-acccount button {
+    color: black !important;
+    font-size: 20px;
+}
+
+    .accordion-acccount button > span {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+.accordion-acccount ul li {
+    display: flex;
+    justify-content: space-between;
+}
