@@ -8,7 +8,5 @@ namespace BudjetManagement.Models
     {
         public IEnumerable<SelectListItem> Accounts { get; set; }
         public IEnumerable<SelectListItem> Categories { get; set; }
-        [Display(Name = "Type Operation")]
-        public TypeOperation TypeOperationId { get; set; }
     }
 }

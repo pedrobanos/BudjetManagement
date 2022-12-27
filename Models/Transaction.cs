@@ -17,7 +17,9 @@ namespace BudjetManagement.Models
         public int CategoryId { get; set; }
         [Range(1, maximum: int.MaxValue, ErrorMessage = "Must select a valid account")]
         [Display(Name = "Account")]
-        public int AccountId { get; set; } 
+        public int AccountId { get; set; }
+        [Display(Name = "Type Operation")]
+        public TypeOperation TypeOperationId { get; set; } = TypeOperation.Incomings;
 
 
 

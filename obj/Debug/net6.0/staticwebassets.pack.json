@@ -17,6 +17,10 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "C:\\Users\\pedro\\source\\repos\\BudjetManagement\\BudjetManagement\\wwwroot\\js\\TransactionsForm.js",
+      "PackagePath": "staticwebassets\\js\\TransactionsForm.js"
+    },
+    {
       "Id": "C:\\Users\\pedro\\source\\repos\\BudjetManagement\\BudjetManagement\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },

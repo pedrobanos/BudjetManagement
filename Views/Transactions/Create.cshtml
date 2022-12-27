@@ -31,7 +31,7 @@
 
     <div class="mb-3">
         <label asp-for="CategoryId" class="form-label"></label>
-        <select asp-for="CategoryId"
+        <select asp-for="CategoryId " asp-items="Model.Categories"
                 class="form-select"></select>
         <span asp-validation-for="CategoryId" class="text-danger"></span>
     </div>
@@ -50,27 +50,16 @@
     <a class="btn btn-secondary" asp-action="index">cancel</a>
 </form>
 
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script>
+    <script src="~/js/TransactionsForm.js" asp-append-version="true"></script>
 
+    <script>
         const obtainCategoriesUrl = '@Url.Action("ObtainCategories")';
 
-        $(function(){
-            $("#TypeOperationId").change(async function(){
-                const selectedValue = $(this).val();
-
-                const response = await fetch(obtainCategoriesUrl, {
-                    method:'POST',
-                    body: 'selectedValue',
-                    headers: {
-                        'Content-Type':'application/json'
-                    }
-                });
-            
-                const json = await response.json();
-                console.log(json);
-            })
+        $(function () {
+            initializeFormTransactions(obtainCategoriesUrl);
         })
 
     </script>
