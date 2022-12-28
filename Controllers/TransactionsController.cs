@@ -79,7 +79,7 @@ namespace BudjetManagement.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Update(int id)
+        public async Task<IActionResult> Update(int id, string urlReturn = null)
         {
             var userId = userService.ObtainUserId();
             var transaction = await transactionsRepo.ObtainById(id, userId);
@@ -101,6 +101,7 @@ namespace BudjetManagement.Controllers
             model.AccountPrevId = transaction.AccountId;
             model.Categories = await ObtainCategories(userId, transaction.TypeOperationId);
             model.Accounts = await ObtainAccounts(userId);
+            model.UrlReturn= urlReturn;
 
             return View(model);
         }
@@ -141,8 +142,15 @@ namespace BudjetManagement.Controllers
             await transactionsRepo.Update(transaction, 
                 model.PricePrev, 
                 model.AccountPrevId);
-
-            return RedirectToAction("Index");
+            if (string.IsNullOrEmpty(model.UrlReturn))
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return LocalRedirect(model.UrlReturn);
+            }
+            
         }
 
         [HttpPost]

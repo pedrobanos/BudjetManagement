@@ -4,5 +4,6 @@
     {
         public int AccountPrevId { get; set; }
         public decimal PricePrev { get; set; }
+        public string UrlReturn { get; set; }
     }
 }

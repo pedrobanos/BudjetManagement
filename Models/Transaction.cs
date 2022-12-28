@@ -20,6 +20,8 @@ namespace BudjetManagement.Models
         public int AccountId { get; set; }
         [Display(Name = "Type Operation")]
         public TypeOperation TypeOperationId { get; set; } = TypeOperation.Incomings;
+        public string Account { get; set; }
+        public string Category { get; set; }
 
 
 
