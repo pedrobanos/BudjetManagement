@@ -50,7 +50,7 @@ namespace BudjetManagement.Services
         public async Task<Account>ObtainById(int id, int userId)
         {
             using var connection = new SqlConnection(connectionString);
-            return await connection.QueryFirstOrDefaultAsync<Account>(@"SELECT Accounts.Id, Accounts.Name, Balance, Description, ta.Id 
+            return await connection.QueryFirstOrDefaultAsync<Account>(@"SELECT Accounts.Id, Accounts.Name, Balance, Description, TypeAccountId 
                                                                         FROM Accounts
                                                                         INNER JOIN TypesAccounts ta
                                                                         ON ta.Id = Accounts.TypeAccountId
@@ -61,7 +61,7 @@ namespace BudjetManagement.Services
         {
             using var connection = new SqlConnection(connectionString);
             await connection.ExecuteAsync(@"UPDATE Accounts
-                                           SET Name = @Name, Balance = @Balance/100, Description = @Description,
+                                           SET Name = @Name, Balance = @Balance, Description = @Description,
                                            TypeAccountId = @TypeAccountId
                                            WHERE Id = @Id", account);
         }

@@ -1,0 +1,24 @@
+﻿@model SubmenuTransactions
+
+<ul class=" nav nav-pills nav-fill mb-3">
+    <li class="nav-item">
+        <a class="nav-link @(Model == SubmenuTransactions.Daily ? "active":"none")" 
+        asp-action="Index">Daily</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(Model == SubmenuTransactions.Weekly ? "active":"none")" 
+        asp-action="Weekly">Weekly</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(Model == SubmenuTransactions.Monthly ? "active":"none")" 
+        asp-action="Monthly">Monthly</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(Model == SubmenuTransactions.ExcelReport ? "active":"none")" 
+        asp-action="ExcelReport">Excel</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(Model == SubmenuTransactions.Calendary ? "active":"none")" 
+        asp-action="Calendary">Calendary</a>
+    </li>
+</ul>

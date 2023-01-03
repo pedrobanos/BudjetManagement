@@ -1,0 +1,94 @@
+﻿@model ReportTransactionsDetailed
+
+@{
+    string FormatBalance(decimal balance)
+    {
+        return String.Format("{0:C}", balance);
+    }
+}
+
+<h4>
+    <a asp-route-month="@ViewBag.prevMonth" asp-route-year="@ViewBag.prevYear"
+       class="btn btn-secondary">
+        <i class="fa-solid fa-chevron-left"></i>
+    </a>
+    @Model.DateTransactionInitial.ToString("MMM").ToUpper()-@Model.DateTransactionInitial.Year
+    <a asp-route-month="@ViewBag.nextMonth" asp-route-year="@ViewBag.nextYear"
+       class="btn btn-secondary">
+        <i class="fa-solid fa-chevron-right"></i>
+    </a>
+</h4>
+
+<div class="container-total mb-3">
+    <div>
+        <div>
+            <strong>Deposits</strong>
+        </div>
+        <div class="active">
+            @FormatBalance(Model.BalanceDeposits)
+        </div>
+    </div>
+    <div>
+        <div>
+            <strong>Withdraw</strong>
+        </div>
+        <div class="passive">
+            @FormatBalance(Model.BalanceWithdraws)
+        </div>
+    </div>
+    <div>
+        <div>
+            <strong>Totals</strong>
+        </div>
+        <div>
+            @FormatBalance(Model.Total)
+        </div>
+    </div>
+</div>
+
+@if (Model.TransactionsListed.Count() == 0)
+{
+    <h5>No data available</h5>
+}
+else
+{
+    <table class="table">
+        <tbody>
+            @foreach (var transactionListed in Model.TransactionsListed)
+            {
+                <tr style="background-color: lightblue; font-size:26px">
+                    <td colspan="3">
+                        @transactionListed.DateTransaction.Day
+                        <span class="badge bg-secondary">
+                            @transactionListed.DateTransaction.ToString("ddd")
+                        </span>
+                    </td>
+                    <td class="active">@FormatBalance(transactionListed.BalanceDeposits)</td>
+                    <td class="passive">@FormatBalance(transactionListed.BalanceWithdraws)</td>
+                </tr>
+                @foreach (var transaction in transactionListed.Transactions)
+                {
+                    <tr style="vertical-align: middle">
+                        <td>
+                            <a asp-controller="transactions" asp-action="Update"
+                   asp-route-id="@transaction.Id" asp-route-urlReturn="@ViewBag.urlReturn">
+                                <i class="fa-solid fa-pencil"></i>
+                            </a>
+                        </td>
+                        <td>@transaction.Category</td>
+                        <td>@transaction.Account</td>
+                        <td class="active">
+                            @(transaction.TypeOperationId == TypeOperation.Incomings ?
+                                FormatBalance(transaction.Price) : null)
+                        </td>
+                        <td class="passive">
+                            @(transaction.TypeOperationId == TypeOperation.Outgoings ?
+                                FormatBalance(transaction.Price) : null)
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+}

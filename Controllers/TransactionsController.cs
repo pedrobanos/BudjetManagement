@@ -17,19 +17,100 @@ namespace BudjetManagement.Controllers
         private readonly ICategoriesRepo categoriesRepo;
         private readonly ITransactionsRepo transactionsRepo;
         private readonly IMapper mapper;
+        private readonly IReportsService reportsService;
 
         public TransactionsController(IUserService userService,
             IAccountsRepo accountsRepo, ICategoriesRepo categoriesRepo,
-            ITransactionsRepo transactionsRepo,IMapper mapper)
+            ITransactionsRepo transactionsRepo,IMapper mapper, IReportsService reportsService)
         {
             this.userService = userService;
             this.accountsRepo = accountsRepo;
             this.categoriesRepo = categoriesRepo;
             this.transactionsRepo = transactionsRepo;
             this.mapper = mapper;
+            this.reportsService = reportsService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(int month, int year)
+        {
+            var userId = userService.ObtainUserId();
+
+            var model = await reportsService.ObtainReportTransactionsDetailed(userId, month, year, ViewBag);
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> Weekly(int month, int year)
+        {
+            var userId = userService.ObtainUserId();
+            IEnumerable<ResultObtainByWeek> transactionsByWeek =
+                    await reportsService.ObtainReportWeekly(userId, month, year, ViewBag);
+
+            var sorted = transactionsByWeek.GroupBy(x => x.Week).Select(x =>
+            new ResultObtainByWeek()
+            {
+                Week = x.Key,
+                Incomings = x.Where(x => x.TypeOperationId == TypeOperation.Incomings)
+                .Select(x => x.Price).FirstOrDefault(),
+                Outgoings = x.Where(x => x.TypeOperationId == TypeOperation.Outgoings)
+                .Select(x => x.Price).FirstOrDefault()
+            }).ToList();
+
+            if (year == 0 || month == 0)
+            {
+                var today = DateTime.Today;
+                year = today.Year;
+                month = today.Month;
+            }
+
+            var referenceDate = new DateTime(year, month, 1);
+            var daysOfMonth = Enumerable.Range(1, referenceDate.AddMonths(1).AddDays(-1).Day);
+
+            var daysDivided = daysOfMonth.Chunk(7).ToList();
+            
+            for(int i = 0; i < daysDivided.Count; i++)
+            {
+                var week = i + 1;
+                var dateTransactionInitial = new DateTime(year, month, daysDivided[i].First());
+                var dateTransactionFinal = new DateTime(year, month, daysDivided[i].Last());
+                var weekSorted = sorted.FirstOrDefault(x => x.Week == week);
+
+                if (weekSorted is null)
+                {
+                    sorted.Add(new ResultObtainByWeek()
+                    {
+                        Week = week,
+                        DateTransactionInitial = dateTransactionInitial,
+                        DateTransactionFinal = dateTransactionFinal
+                    });
+                }
+                else
+                {
+                    weekSorted.DateTransactionInitial = dateTransactionInitial;
+                    weekSorted.DateTransactionFinal = dateTransactionFinal;
+                }
+            }
+
+            sorted = sorted.OrderByDescending(el => el.Week).ToList();
+
+            var model = new WeeklyReportViewModel();
+            model.TransactionsByWeek = sorted;
+            model.ReferenceDate = referenceDate;
+
+            return View(model);
+        }
+
+        public IActionResult Monthly()
+        {
+            return View();
+        }
+
+        public IActionResult ExcelReport()
+        {
+            return View();
+        }
+
+        public IActionResult Calendary()
         {
             return View();
         }
@@ -142,6 +223,7 @@ namespace BudjetManagement.Controllers
             await transactionsRepo.Update(transaction, 
                 model.PricePrev, 
                 model.AccountPrevId);
+
             if (string.IsNullOrEmpty(model.UrlReturn))
             {
                 return RedirectToAction("Index");
@@ -154,7 +236,7 @@ namespace BudjetManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id, string urlReturn = null)
         {
             var userId = userService.ObtainUserId();
 
@@ -167,7 +249,14 @@ namespace BudjetManagement.Controllers
 
             await transactionsRepo.Delete(id);
 
-            return RedirectToAction("Index");
+            if (string.IsNullOrEmpty(urlReturn))
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return LocalRedirect(urlReturn);
+            }
         }
 
         private async Task<IEnumerable<SelectListItem>> ObtainAccounts(int userId)

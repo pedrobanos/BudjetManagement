@@ -14,15 +14,18 @@ namespace BudjetManagement.Controllers
         private readonly IAccountsRepo accountsRepo;
         private readonly IMapper mapper;
         private readonly ITransactionsRepo transactionsRepo;
+        private readonly IReportsService reportsService;
 
         public AccountsController(ITypesAccountsRepo typesAccountsRepo, 
-            IUserService userService, IAccountsRepo accountsRepo,IMapper mapper, ITransactionsRepo transactionsRepo)
+            IUserService userService, IAccountsRepo accountsRepo,IMapper mapper, ITransactionsRepo transactionsRepo,
+            IReportsService reportsService)
         {
             this.typesAccountsRepo = typesAccountsRepo;
             this.userService = userService;
             this.accountsRepo = accountsRepo;
             this.mapper = mapper;
             this.transactionsRepo = transactionsRepo;
+            this.reportsService = reportsService;
         }
 
         public async Task<IActionResult> Index()
@@ -52,52 +55,8 @@ namespace BudjetManagement.Controllers
                 return RedirectToAction("NotFoundPage", "Index");
             }
 
-            DateTime dateTransactionInitial;
-            DateTime dateTransactionFinal;
-
-            if(month <= 0 || month > 12 || year <= 1900)
-            {
-                var today = DateTime.Today;
-                dateTransactionInitial = new DateTime(today.Year, today.Month, 1);
-            }
-            else
-            {
-                dateTransactionInitial = new DateTime(year, month, 1);
-            }
-
-            dateTransactionFinal = dateTransactionInitial.AddMonths(1).AddDays(-1);
-
-            var obtainTransactionsByAccount = new ObtainTransactionsByAccount()
-            {
-                AccountId = id,
-                UserId = userId,
-                DateTransactionInitial = dateTransactionInitial,
-                DateTransactionFinal = dateTransactionFinal
-            };
-
-            var transactions = await transactionsRepo
-                .ObtainByAccoundId(obtainTransactionsByAccount);
-
-            var model = new ReportTransactionsDetailed();
             ViewBag.Account = account.Name;
-
-            var transactionsByDate = transactions.OrderByDescending(el => el.DateTransaction)
-                           .GroupBy(el => el.DateTransaction)
-                           .Select(group => new ReportTransactionsDetailed.TransactionsByDate()
-                           {
-                               DateTransaction = group.Key,
-                               Transactions = group.AsEnumerable()
-                           });
-
-            model.TransactionsListed = transactionsByDate;
-            model.DateTransactionInitial= dateTransactionInitial;
-            model.DateTransactionFinal = dateTransactionFinal;
-
-            ViewBag.prevMonth = dateTransactionInitial.AddMonths(-1).Month;
-            ViewBag.prevYear = dateTransactionInitial.AddMonths(-1).Year;
-            ViewBag.nextMonth = dateTransactionFinal.AddMonths(1).Month;
-            ViewBag.nextYear = dateTransactionFinal.AddMonths(1).Year;
-            ViewBag.urlReturn = HttpContext.Request.Path + HttpContext.Request.QueryString;
+            var model = await reportsService.ObtainReportTransactionsDetailedByAccount(userId, id, month, year, ViewBag);
 
             return View(model);
         }

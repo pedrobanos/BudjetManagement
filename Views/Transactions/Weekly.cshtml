@@ -1,0 +1,40 @@
+﻿@model WeeklyReportViewModel
+
+@{
+    ViewData["Title"] = "Weekly Report";
+
+    string DateParse(DateTime date)
+    {
+        return date.ToString("MM.dd");
+    }
+}
+
+<partial name="_Submenu" Model="SubmenuTransactions.Weekly" />
+
+<table class="table" style="font-size: 20px">
+    <thead>
+        <tr>
+            <th>Week</th>
+            <th style="text-align:right" >Incomings</th>
+            <th style="text-align:right" >Outgoings</th>
+        </tr>
+    </thead>
+    @foreach (var transactionByWeek in Model.TransactionsByWeek)
+    {
+        <tr>
+            <td>
+                <a style="text-decoration:none" asp-action="Index"
+                asp-route-year ="@Model.ReferenceDate.Year"
+                asp-route-month="@Model.ReferenceDate.Month">
+                    @DateParse(transactionByWeek.DateTransactionInitial) ~ 
+                    @DateParse(transactionByWeek.DateTransactionFinal)</a>
+            </td>
+            <td class="active" style="text-align: right">
+                @transactionByWeek.Incomings
+            </td>
+            <td class="passive" style="text-align: right">
+                @transactionByWeek.Outgoings
+            </td>
+        </tr>
+    }
+</table>

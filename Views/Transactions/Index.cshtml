@@ -1,9 +1,14 @@
-﻿@*@model IEnumerable<TransactionCreateViewModel>*@
+﻿@model ReportTransactionsDetailed
 
 
 @{
-    ViewData["Title"] = "Transactions";
+    ViewData["Title"] = "Daily Report";
 }
 
 
-<h1>Transactions </h1>
+<partial name="_Submenu" Model="SubmenuTransactions.Daily" />
+
+<div class="mb-3">
+    <a class="btn btn-primary mb-3" asp-action="Create">Create new Transaction</a>
+</div>
+<partial name="_ReportTransactionsDetailed" model="Model"/>

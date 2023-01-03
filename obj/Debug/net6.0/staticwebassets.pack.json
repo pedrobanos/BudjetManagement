@@ -5,6 +5,14 @@
       "PackagePath": "staticwebassets\\BudjetManagement.bundle.scp.css"
     },
     {
+      "Id": "C:\\Users\\pedro\\source\\repos\\BudjetManagement\\BudjetManagement\\wwwroot\\Images\\csharp.svg",
+      "PackagePath": "staticwebassets\\Images\\csharp.svg"
+    },
+    {
+      "Id": "C:\\Users\\pedro\\source\\repos\\BudjetManagement\\BudjetManagement\\wwwroot\\Images\\rollsroyce.svg",
+      "PackagePath": "staticwebassets\\Images\\rollsroyce.svg"
+    },
+    {
       "Id": "C:\\Users\\pedro\\source\\repos\\BudjetManagement\\BudjetManagement\\wwwroot\\css\\custom.css",
       "PackagePath": "staticwebassets\\css\\custom.css"
     },

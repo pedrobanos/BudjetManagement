@@ -10,6 +10,8 @@ namespace BudjetManagement.Services
         Task Delete(int id);
         Task<IEnumerable<Transaction>> ObtainByAccoundId(ObtainTransactionsByAccount model);
         Task<Transaction> ObtainById(int id, int userId);
+        Task<IEnumerable<Transaction>> ObtainByUserId(ParamObtainTransactionsByUser model);
+        Task<IEnumerable<ResultObtainByWeek>> ObtainByWeek(ParamObtainTransactionsByUser model);
         Task Update(Transaction transaction, decimal pricePrev, int accountPrev);
     }
     public class TransactionsRepo : ITransactionsRepo
@@ -40,7 +42,7 @@ namespace BudjetManagement.Services
 
         }
 
-        public async Task<IEnumerable<Transaction>>ObtainByAccoundId(
+        public async Task<IEnumerable<Transaction>> ObtainByAccoundId(
             ObtainTransactionsByAccount model)
         {
             using var connection = new SqlConnection(connectionString);
@@ -55,8 +57,23 @@ namespace BudjetManagement.Services
                                     WHERE t.AccountId = @AccountId AND t.UserId = @UserId
                                     AND DateTransaction BETWEEN @DateTransactionInitial AND @DateTransactionFinal", model);
         }
-
-        public async Task Update (Transaction transaction, decimal pricePrev, int accountPrevId)
+        public async Task<IEnumerable<Transaction>> ObtainByUserId(
+            ParamObtainTransactionsByUser model)
+        {
+            using var connection = new SqlConnection(connectionString);
+            return await connection.QueryAsync<Transaction>(
+                                    @"SELECT t.Id, t.Price, t.DateTransaction, c.Name as Category, 
+                                    acc.Name as Account, c.TypeOperationId
+                                    FROM Transactions t
+                                    INNER JOIN Categories c
+                                    ON c.Id = t.CategoryId
+                                    INNER JOIN Accounts acc
+                                    ON acc.Id = t.AccountId
+                                    WHERE t.UserId = @UserId
+                                    AND DateTransaction BETWEEN @DateTransactionInitial AND @DateTransactionFinal
+                                    ORDER BY t.DateTransaction DESC", model);
+        }
+        public async Task Update(Transaction transaction, decimal pricePrev, int accountPrevId)
         {
             using var connection = new SqlConnection(connectionString);
             await connection.ExecuteAsync("Transactions_Update",
@@ -68,7 +85,7 @@ namespace BudjetManagement.Services
                     transaction.CategoryId,
                     transaction.AccountId,
                     transaction.Comment,
-                    pricePrev, 
+                    pricePrev,
                     accountPrevId
                 }, commandType: System.Data.CommandType.StoredProcedure);
         }
@@ -83,6 +100,22 @@ namespace BudjetManagement.Services
                                                     ON cat.Id = Transactions.CategoryId
                                                     WHERE Transactions.Id = @Id AND Transactions.UserId = @UserId",
                                                 new { id, userId });
+        }
+
+        public async Task<IEnumerable<ResultObtainByWeek>> ObtainByWeek
+            (ParamObtainTransactionsByUser model)
+        {
+            using var connection = new SqlConnection(connectionString);
+            return await connection.QueryAsync<ResultObtainByWeek>(@"
+                    Select datediff(d, @dateTransactionInitial, @dateTransactionFinal) / 7 + 1 as Week,
+                    SUM(Price) as Price, cat.TypeOperationId
+                    FROM Transactions
+                    INNER JOIN Categories cat
+                    ON cat.Id = Transactions.CategoryId
+                    WHERE Transactions.UserId = @userId AND  
+                    DateTransaction BETWEEN @dateTransactionInitial AND @dateTransactionFinal
+                    GROUP BY datediff(d, @dateTransactionInitial, DateTransaction) / 7 , cat.TypeOperationId"
+                    , model);
         }
 
         public async Task Delete(int id)
