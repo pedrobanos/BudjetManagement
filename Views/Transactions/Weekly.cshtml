@@ -25,7 +25,7 @@
             <td>
                 <a style="text-decoration:none" asp-action="Index"
                 asp-route-year ="@Model.ReferenceDate.Year"
-                asp-route-month="@Model.ReferenceDate.Month">
+               asp-route-month="@Model.ReferenceDate.Month">
                     @DateParse(transactionByWeek.DateTransactionInitial) ~ 
                     @DateParse(transactionByWeek.DateTransactionFinal)</a>
             </td>

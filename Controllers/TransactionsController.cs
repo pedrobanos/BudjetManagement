@@ -68,7 +68,7 @@ namespace BudjetManagement.Controllers
 
             var daysDivided = daysOfMonth.Chunk(7).ToList();
             
-            for(int i = 0; i < daysDivided.Count; i++)
+            for(int i = 0; i < daysDivided.Count(); i++)
             {
                 var week = i + 1;
                 var dateTransactionInitial = new DateTime(year, month, daysDivided[i].First());
